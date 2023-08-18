@@ -17,8 +17,25 @@ img {
   max-width: 100%;
 }
 
-button {
+.btn-color {
   padding: 15px 40px;
   font-variant: small-caps;
- 
+}
+
+.timer {
+  display: flex;
+}
+
+.field {
+  margin: 10px;
+}
+
+.value {
+  display: block;
+  text-align: center;
+  font-size: 30px;
+}
+
+.label {
+  text-transform: uppercase;
 }
