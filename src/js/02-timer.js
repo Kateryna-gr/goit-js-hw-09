@@ -21,19 +21,19 @@ const options = {
   onClose(selectedDates) {
     let dateNow = new Date();
     let chosenDate = selectedDates[0];
-    let convChosenDate = convertMs(chosenDate);
+    // let convChosenDate = convertMs(chosenDate);
     let intervalId = 0;
 
-    if (dateNow - chosenDate > 0) {
+    if (dateNow >= chosenDate) {
       timer.start.disabled = true;
       Notiflix.Notify.failure('Please choose a date in the future', {
-        width: '280px', 
+        width: '280px',
         borderRadius: '40px',
       });
     } else {
       timer.start.disabled = false;
-      console.log(convChosenDate);
-      console.log(convertMs(dateNow));
+      // console.log(convChosenDate);
+      // console.log(convertMs(dateNow));
 
       timer.start.addEventListener('click', () => {
         timer.start.disabled = true;
@@ -45,66 +45,61 @@ const options = {
 
     function handlerTimer() {
       const dateNow = new Date();
-      if (
-        convChosenDate.days === convertMs(dateNow).days &&
-        convChosenDate.hours === convertMs(dateNow).hours &&
-        convChosenDate.minutes === convertMs(dateNow).minutes &&
-        convChosenDate.seconds === convertMs(dateNow).seconds
-      ) {        
+
+      let remainingTime = chosenDate - dateNow;
+      let remainingSeconds = Math.floor(remainingTime / 1000);
+
+      let remDays = Math.floor(remainingSeconds / (24 * 60 * 60));
+      timer.days.textContent = addLeadingZero(remDays);
+
+      let remHours = Math.floor((remainingSeconds % (24 * 60 * 60)) / (60 * 60));
+      timer.hours.textContent = addLeadingZero(remHours);
+
+      let remMinutes = Math.floor((remainingSeconds % (60 * 60)) / 60);
+      timer.minutes.textContent = addLeadingZero(remMinutes);
+
+      let remSeconds = Math.floor(remainingSeconds % 60);
+      timer.seconds.textContent = addLeadingZero(remSeconds);
+
+      if (dateNow >= chosenDate) {        
         Notiflix.Notify.info(
-          `Timer stoped, it's ${selectedDates[0].toLocaleString()}`, {
+          `Timer stoped, it's ${selectedDates[0].toLocaleString()}`,
+          {
             width: '280px',
             borderRadius: '40px',
           }
         );
         clearInterval(intervalId);
+        timer.days.textContent = '00';
+        timer.hours.textContent = '00';
+        timer.minutes.textContent = '00';
+        timer.seconds.textContent = '00';
       }
-
-      let remDays = convChosenDate.days - convertMs(dateNow).days;
-      timer.days.textContent = addLeadingZero(remDays);
-
-      let remHours =
-        convChosenDate.hours < convertMs(dateNow).hours
-          ? 24 - convertMs(dateNow).hours + convChosenDate.hours
-          : convChosenDate.hours - convertMs(dateNow).hours;
-      timer.hours.textContent = addLeadingZero(remHours);
-
-      let remMinutes =
-        convChosenDate.minutes < convertMs(dateNow).minutes
-          ? 60 - convertMs(dateNow).minutes + convChosenDate.minutes
-          : convChosenDate.minutes - convertMs(dateNow).minutes;
-      timer.minutes.textContent = addLeadingZero(remMinutes);
-
-      let remSeconds =
-        convChosenDate.seconds < convertMs(dateNow).seconds
-          ? 60 - convertMs(dateNow).seconds + convChosenDate.seconds
-          : convChosenDate.seconds - convertMs(dateNow).seconds;
-      timer.seconds.textContent = addLeadingZero(remSeconds);
     }
   },
 };
 
 flatpickr(timer.input, options);
 
-function convertMs(ms) {
-  // Number of milliseconds per unit of time
-  const second = 1000;
-  const minute = second * 60;
-  const hour = minute * 60;
-  const day = hour * 24;
-
-  // Remaining days
-  const days = Math.floor(ms / day);
-  // Remaining hours
-  const hours = Math.floor((ms % day) / hour + 3);
-  // Remaining minutes
-  const minutes = Math.floor(((ms % day) % hour) / minute);
-  // Remaining seconds
-  const seconds = Math.floor((((ms % day) % hour) % minute) / second);
-
-  return { days, hours, minutes, seconds };
-}
-
 function addLeadingZero(value) {
   return value.toLocaleString().padStart(2, 0);
 }
+
+// function convertMs(ms) {
+//   // Number of milliseconds per unit of time
+//   const second = 1000;
+//   const minute = second * 60;
+//   const hour = minute * 60;
+//   const day = hour * 24;
+
+//   // Remaining days
+//   const days = Math.floor(ms / day);
+//   // Remaining hours
+//   const hours = Math.floor((ms % day) / hour + 3);
+//   // Remaining minutes
+//   const minutes = Math.floor(((ms % day) % hour) / minute);
+//   // Remaining seconds
+//   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
+
+//   return { days, hours, minutes, seconds };
+// }
